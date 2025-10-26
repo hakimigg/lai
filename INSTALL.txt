@@ -1,0 +1,59 @@
+╔══════════════════════════════════════════════════════════════╗
+║         CodeMaster AI - Termux Edition Installation         ║
+╚══════════════════════════════════════════════════════════════╝
+
+📱 QUICK INSTALLATION GUIDE
+
+1️⃣  INSTALL TERMUX
+   - Download from F-Droid (NOT Play Store)
+   - https://f-droid.org/packages/com.termux/
+
+2️⃣  SETUP TERMUX (Run these commands in Termux)
+   pkg update && pkg upgrade -y
+   pkg install python git -y
+   termux-setup-storage
+
+3️⃣  COPY FILES TO TERMUX
+   - Transfer this "termux ai" folder to your phone
+   - In Termux, run:
+   cp -r /storage/emulated/0/Download/termux\ ai ~/
+   cd ~/termux\ ai
+
+4️⃣  GET API KEY (FREE)
+   - Visit: https://console.groq.com/keys
+   - Sign up and copy your API key
+   - In Termux, run:
+   export GROQ_API_KEY="your_key_here"
+
+5️⃣  INSTALL DEPENDENCIES
+   pip install -r requirements.txt
+
+6️⃣  RUN THE APP
+   python main.py
+
+✅ DONE! You should see the welcome screen.
+
+═══════════════════════════════════════════════════════════════
+
+📚 DETAILED GUIDES:
+   - README.md - Full feature documentation
+   - TERMUX_SETUP.md - Complete setup guide with troubleshooting
+
+💡 TIPS:
+   - Use Groq API (free & fast)
+   - Enable storage access for saving files
+   - Type "help" in the app for all commands
+   - Type "setup" for API configuration help
+
+🚀 QUICK COMMANDS:
+   help       - Show all commands
+   status     - Check API connection
+   search     - Web search
+   save code  - Save generated code
+   exit       - Quit
+
+═══════════════════════════════════════════════════════════════
+
+Need help? Check TERMUX_SETUP.md for detailed troubleshooting!
+
+Happy coding! 🎉
