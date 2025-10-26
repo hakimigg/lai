@@ -224,16 +224,9 @@ class CodeMasterAI:
         print()
     
     async def get_ai_response(self, user_input: str) -> str:
-        """Get response from AI with thinking animation"""
+        """Get response from AI"""
         if not self.config.get_available_providers():
             return f"{Colors.BRIGHT_RED}❌ No AI providers configured. Please set up API keys first.{Colors.RESET}\nType 'setup' for instructions."
-        
-        # Start thinking animation
-        self.thinking_animation.start()
-        
-        # Add random delay to simulate thinking
-        thinking_time = random.uniform(self.config.THINKING_DELAY_MIN, self.config.THINKING_DELAY_MAX)
-        await asyncio.sleep(thinking_time)
         
         try:
             # Get AI response
@@ -241,42 +234,30 @@ class CodeMasterAI:
             return response
         except Exception as e:
             return f"{Colors.BRIGHT_RED}❌ Error getting AI response: {str(e)}{Colors.RESET}"
-        finally:
-            # Stop thinking animation
-            self.thinking_animation.stop()
     
     async def handle_web_search(self, query: str) -> str:
         """Handle web search requests"""
-        self.thinking_animation.start()
         try:
             results = await self.web_engine.search_web(query)
             return f"{Colors.BRIGHT_GREEN}🔍 Web Search Results for '{query}':{Colors.RESET}\n\n{results}"
         except Exception as e:
             return f"{Colors.BRIGHT_RED}❌ Search error: {str(e)}{Colors.RESET}"
-        finally:
-            self.thinking_animation.stop()
     
     async def handle_news(self) -> str:
         """Get current news"""
-        self.thinking_animation.start()
         try:
             news = await self.web_engine.get_current_news()
             return f"{Colors.BRIGHT_GREEN}📰 Latest News Headlines:{Colors.RESET}\n\n{news}"
         except Exception as e:
             return f"{Colors.BRIGHT_RED}❌ News error: {str(e)}{Colors.RESET}"
-        finally:
-            self.thinking_animation.stop()
     
     async def handle_weather(self, location: str = "current") -> str:
         """Get weather information"""
-        self.thinking_animation.start()
         try:
             weather = await self.web_engine.get_weather(location)
             return f"{Colors.BRIGHT_GREEN}🌤️ Weather Information:{Colors.RESET}\n\n{weather}"
         except Exception as e:
             return f"{Colors.BRIGHT_RED}❌ Weather error: {str(e)}{Colors.RESET}"
-        finally:
-            self.thinking_animation.stop()
     
     async def process_command(self, user_input: str) -> str:
         """Process user commands and generate responses"""
