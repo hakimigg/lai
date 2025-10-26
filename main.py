@@ -94,11 +94,11 @@ class ThinkingAnimation:
     
     def _animate(self):
         """Animation loop"""
-        frames = ['🤔 Thinking', '🤔 Thinking.', '🤔 Thinking..', '🤔 Thinking...']
+        frames = ['   ', '.  ', '.. ', '...']
         i = 0
         while self.thinking:
-            print(f'\r{Colors.BRIGHT_YELLOW}{frames[i % len(frames)]}{Colors.RESET}', end='', flush=True)
-            time.sleep(0.5)
+            print(f'\r{Colors.BRIGHT_CYAN}Thinking{frames[i % len(frames)]}{Colors.RESET}', end='', flush=True)
+            time.sleep(0.4)
             i += 1
 
 class CodeMasterAI:
@@ -177,18 +177,18 @@ class CodeMasterAI:
   {Colors.CYAN}project <name>{Colors.RESET}  - Create project structure
 
 {Colors.BRIGHT_GREEN}Just Chat Naturally!{Colors.RESET}
+  {Colors.DIM}> Hi! How are you?{Colors.RESET}
+  {Colors.DIM}> What's your favorite programming language?{Colors.RESET}
   {Colors.DIM}> Create a web scraper in Python{Colors.RESET}
-  {Colors.DIM}> Build a React todo app with TypeScript{Colors.RESET}
+  {Colors.DIM}> Tell me about quantum computing{Colors.RESET}
   {Colors.DIM}> What's happening in tech today?{Colors.RESET}
-  {Colors.DIM}> Debug this C++ memory leak{Colors.RESET}
-  {Colors.DIM}> Make a Discord bot that does X{Colors.RESET}
-  {Colors.DIM}> How do I optimize this SQL query?{Colors.RESET}
+  {Colors.DIM}> Can you help me with my homework?{Colors.RESET}
 
-{Colors.BRIGHT_YELLOW}💡 Pro Tip:{Colors.RESET} Just ask me anything! I'm powered by real AI and can:
-  • Generate any code or tool you need
-  • Access current web information
-  • Debug and optimize your code
-  • Chat about anything like a real assistant
+{Colors.BRIGHT_YELLOW}💡 I'm here to chat!{Colors.RESET} I can:
+  • Chat about anything - tech, life, hobbies, whatever!
+  • Help with coding when you need it
+  • Search the web for current info
+  • Be your friendly AI companion 😊
 """
         print(help_text)
     
@@ -228,12 +228,18 @@ class CodeMasterAI:
         if not self.config.get_available_providers():
             return f"{Colors.BRIGHT_RED}❌ No AI providers configured. Please set up API keys first.{Colors.RESET}\nType 'setup' for instructions."
         
+        # Start thinking animation
+        self.thinking_animation.start()
+        
         try:
             # Get AI response
             response = await self.ai_engine.generate_response(user_input, self.conversation_history)
             return response
         except Exception as e:
             return f"{Colors.BRIGHT_RED}❌ Error getting AI response: {str(e)}{Colors.RESET}"
+        finally:
+            # Stop thinking animation
+            self.thinking_animation.stop()
     
     async def handle_web_search(self, query: str) -> str:
         """Handle web search requests"""
@@ -527,8 +533,8 @@ class CodeMasterAI:
         self.clear_screen()
         self.print_banner()
         
-        print(f"{Colors.BRIGHT_GREEN}🎉 Welcome to CodeMaster AI! I'm powered by real AI APIs!{Colors.RESET}")
-        print(f"{Colors.DIM}Ask me anything - I can generate code, search the web, and chat naturally!{Colors.RESET}\n")
+        print(f"{Colors.BRIGHT_GREEN}👋 Hey there! I'm CodeMaster AI, your friendly AI assistant!{Colors.RESET}")
+        print(f"{Colors.DIM}I'm here to chat, help with code, answer questions, or just hang out. What's on your mind?{Colors.RESET}\n")
         
         while True:
             try:
@@ -536,9 +542,10 @@ class CodeMasterAI:
                 prompt = f"{Colors.BRIGHT_CYAN}CodeMaster{Colors.RESET} {Colors.BRIGHT_YELLOW}>{Colors.RESET} "
                 user_input = input(prompt).strip()
                 
-                if user_input.lower() in ['exit', 'quit', 'bye']:
-                    print(f"\n{Colors.BRIGHT_GREEN}Thanks for using CodeMaster AI! Happy coding! 🚀{Colors.RESET}")
-                    break
+                if user_input.lower() in ['exit', 'quit', 'bye', 'goodbye']:
+                    print(f"\n{Colors.BRIGHT_GREEN}👋 Goodbye! It was great chatting with you! Come back anytime! 😊{Colors.RESET}")
+                    print(f"{Colors.DIM}Returning to terminal...{Colors.RESET}\n")
+                    sys.exit(0)
                 
                 if user_input:
                     response = await self.process_command(user_input)
@@ -548,8 +555,9 @@ class CodeMasterAI:
                         print(f"\n{formatted_response}\n")
                 
             except KeyboardInterrupt:
-                print(f"\n\n{Colors.BRIGHT_YELLOW}Goodbye! Thanks for using CodeMaster AI! 👋{Colors.RESET}")
-                break
+                print(f"\n\n{Colors.BRIGHT_YELLOW}👋 Caught you trying to leave! See you next time! 😊{Colors.RESET}")
+                print(f"{Colors.DIM}Returning to terminal...{Colors.RESET}\n")
+                sys.exit(0)
             except EOFError:
                 break
             except Exception as e:
