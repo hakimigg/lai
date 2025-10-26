@@ -1,0 +1,23 @@
+# Termux-Compatible Requirements
+# Install these packages in order
+
+# Core dependencies (no compilation needed)
+requests
+beautifulsoup4
+colorama
+python-dotenv
+aiohttp
+
+# For Groq API (simplest option - install manually)
+# pip install groq
+
+# Alternative: Use older versions that don't need pydantic v2
+# openai==0.28.1
+# anthropic==0.3.11
+
+# Note: If you get build errors, install packages one by one:
+# pip install requests
+# pip install beautifulsoup4
+# pip install colorama
+# pip install python-dotenv
+# pip install aiohttp

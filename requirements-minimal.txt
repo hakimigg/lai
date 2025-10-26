@@ -1,0 +1,17 @@
+# Minimal requirements for Termux - NO COMPILATION NEEDED
+# These packages work without build dependencies
+
+requests
+beautifulsoup4
+colorama
+python-dotenv
+aiohttp
+lxml
+
+# Groq - Works without pydantic issues
+httpx
+typing-extensions
+distro
+sniffio
+anyio
+certifi
