@@ -13,12 +13,15 @@ rm -rf lai
 git clone https://github.com/hakimigg/lai.git
 cd lai
 
-# 3. Install packages ONE BY ONE
+# 3. Install packages ONE BY ONE (watch spelling!)
 pip install requests
 pip install beautifulsoup4  
 pip install colorama
 pip install python-dotenv
 pip install aiohttp
+
+# Note: If python-dotenv fails, you can skip it
+# Just use 'export' to set API keys instead
 
 # 4. Try installing Groq (may fail - that's OK)
 pip install groq

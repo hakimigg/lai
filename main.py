@@ -136,17 +136,6 @@ class CodeMasterAI:
         provider_status = f"🔗 Connected: {', '.join(available_providers)}" if available_providers else "❌ No APIs configured"
         
         banner = f"""
-{Colors.BRIGHT_CYAN}╔══════════════════════════════════════════════════════════════╗
-║              {Colors.BRIGHT_WHITE}🤖 CodeMaster AI v2.0 - Termux{Colors.BRIGHT_CYAN}              ║
-║          {Colors.BRIGHT_YELLOW}Real AI Assistant with Web Access{Colors.BRIGHT_CYAN}               ║
-║                                                              ║
-║  {Colors.BRIGHT_GREEN}🧠 Powered by OpenAI, Claude, Gemini & Groq{Colors.BRIGHT_CYAN}             ║
-║  {Colors.BRIGHT_GREEN}🌐 Real-time web search & current information{Colors.BRIGHT_CYAN}           ║
-║  {Colors.BRIGHT_GREEN}💻 Dynamic code generation & analysis{Colors.BRIGHT_CYAN}                   ║
-║  {Colors.BRIGHT_GREEN}⚡ No templates - Fresh AI responses every time{Colors.BRIGHT_CYAN}         ║
-║  {Colors.BRIGHT_GREEN}📱 Optimized for Termux on Android{Colors.BRIGHT_CYAN}                      ║
-╚══════════════════════════════════════════════════════════════╝{Colors.RESET}
-
 {Colors.BRIGHT_MAGENTA}Today is {self.current_date.strftime('%A, %B %d, %Y')}{Colors.RESET}
 {Colors.DIM}{provider_status}{Colors.RESET}
 {Colors.DIM}Type 'help' for commands, 'exit' to quit{Colors.RESET}
@@ -557,7 +546,7 @@ class CodeMasterAI:
         self.clear_screen()
         self.print_banner()
         
-        print(f"{Colors.BRIGHT_GREEN}🎉 Welcome to CodeMaster AI - Termux Edition!{Colors.RESET}")
+        print(f"{Colors.BRIGHT_GREEN}🎉 Welcome to CodeMaster AI! I'm powered by real AI APIs!{Colors.RESET}")
         print(f"{Colors.DIM}Ask me anything - I can generate code, search the web, and chat naturally!{Colors.RESET}\n")
         
         while True:

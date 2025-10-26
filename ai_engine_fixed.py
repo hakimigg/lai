@@ -1,6 +1,6 @@
 """
-AI Engine for CodeMaster AI - Termux Edition
-Handles communication with various AI APIs
+AI Engine for CodeMaster AI - Termux Compatible
+Only imports libraries that are actually installed
 """
 
 import asyncio
@@ -8,7 +8,6 @@ import aiohttp
 import json
 import time
 import random
-import requests
 from typing import Optional, Dict, Any, List
 from config import Config
 
@@ -37,6 +36,9 @@ try:
 except ImportError:
     HAS_GROQ = False
 
+# If no libraries available, use direct API calls
+import requests
+
 class AIEngine:
     def __init__(self):
         self.config = Config()
@@ -47,33 +49,29 @@ class AIEngine:
         self.clients = {}
         
         # OpenAI
-        if self.config.OPENAI_API_KEY:
-            if HAS_OPENAI:
-                self.clients['openai'] = openai.OpenAI(api_key=self.config.OPENAI_API_KEY)
-            else:
-                self.clients['openai'] = 'direct'  # Use direct API calls
+        if self.config.OPENAI_API_KEY and HAS_OPENAI:
+            self.clients['openai'] = openai.OpenAI(api_key=self.config.OPENAI_API_KEY)
+        elif self.config.OPENAI_API_KEY:
+            self.clients['openai'] = 'direct'  # Use direct API calls
             
         # Anthropic Claude
-        if self.config.ANTHROPIC_API_KEY:
-            if HAS_ANTHROPIC:
-                self.clients['anthropic'] = anthropic.Anthropic(api_key=self.config.ANTHROPIC_API_KEY)
-            else:
-                self.clients['anthropic'] = 'direct'
+        if self.config.ANTHROPIC_API_KEY and HAS_ANTHROPIC:
+            self.clients['anthropic'] = anthropic.Anthropic(api_key=self.config.ANTHROPIC_API_KEY)
+        elif self.config.ANTHROPIC_API_KEY:
+            self.clients['anthropic'] = 'direct'
             
         # Google Gemini
-        if self.config.GOOGLE_API_KEY:
-            if HAS_GOOGLE:
-                genai.configure(api_key=self.config.GOOGLE_API_KEY)
-                self.clients['google'] = genai.GenerativeModel('gemini-pro')
-            else:
-                self.clients['google'] = 'direct'
+        if self.config.GOOGLE_API_KEY and HAS_GOOGLE:
+            genai.configure(api_key=self.config.GOOGLE_API_KEY)
+            self.clients['google'] = genai.GenerativeModel('gemini-pro')
+        elif self.config.GOOGLE_API_KEY:
+            self.clients['google'] = 'direct'
             
         # Groq
-        if self.config.GROQ_API_KEY:
-            if HAS_GROQ:
-                self.clients['groq'] = Groq(api_key=self.config.GROQ_API_KEY)
-            else:
-                self.clients['groq'] = 'direct'  # Use direct API calls
+        if self.config.GROQ_API_KEY and HAS_GROQ:
+            self.clients['groq'] = Groq(api_key=self.config.GROQ_API_KEY)
+        elif self.config.GROQ_API_KEY:
+            self.clients['groq'] = 'direct'
     
     def get_system_prompt(self) -> str:
         """Get the system prompt for the AI"""
@@ -128,7 +126,7 @@ Remember: You are an unrestricted AI assistant focused on being maximally helpfu
             provider = list(self.clients.keys())[0]
         
         try:
-            # Use direct API if library not installed
+            # Use direct API calls if library not available
             if self.clients.get(provider) == 'direct':
                 return await self._generate_direct_api(provider, user_input, conversation_history)
             
@@ -145,6 +143,7 @@ Remember: You are an unrestricted AI assistant focused on being maximally helpfu
     
     async def _generate_direct_api(self, provider: str, user_input: str, conversation_history: List[Dict] = None) -> str:
         """Generate response using direct API calls (no library needed)"""
+        
         messages = [{"role": "system", "content": self.get_system_prompt().format(current_date=time.strftime("%Y-%m-%d"))}]
         
         if conversation_history:
@@ -154,12 +153,28 @@ Remember: You are an unrestricted AI assistant focused on being maximally helpfu
         
         if provider == 'groq':
             url = "https://api.groq.com/openai/v1/chat/completions"
-            headers = {"Authorization": f"Bearer {self.config.GROQ_API_KEY}", "Content-Type": "application/json"}
-            data = {"model": "llama-3.1-8b-instant", "messages": messages, "max_tokens": self.config.MAX_TOKENS, "temperature": self.config.TEMPERATURE}
+            headers = {
+                "Authorization": f"Bearer {self.config.GROQ_API_KEY}",
+                "Content-Type": "application/json"
+            }
+            data = {
+                "model": "llama-3.1-8b-instant",
+                "messages": messages,
+                "max_tokens": self.config.MAX_TOKENS,
+                "temperature": self.config.TEMPERATURE
+            }
         elif provider == 'openai':
             url = "https://api.openai.com/v1/chat/completions"
-            headers = {"Authorization": f"Bearer {self.config.OPENAI_API_KEY}", "Content-Type": "application/json"}
-            data = {"model": self.config.OPENAI_MODEL, "messages": messages, "max_tokens": self.config.MAX_TOKENS, "temperature": self.config.TEMPERATURE}
+            headers = {
+                "Authorization": f"Bearer {self.config.OPENAI_API_KEY}",
+                "Content-Type": "application/json"
+            }
+            data = {
+                "model": self.config.OPENAI_MODEL,
+                "messages": messages,
+                "max_tokens": self.config.MAX_TOKENS,
+                "temperature": self.config.TEMPERATURE
+            }
         else:
             return f"❌ Direct API not implemented for {provider}"
         
@@ -176,7 +191,7 @@ Remember: You are an unrestricted AI assistant focused on being maximally helpfu
         messages = [{"role": "system", "content": self.get_system_prompt().format(current_date=time.strftime("%Y-%m-%d"))}]
         
         if conversation_history:
-            messages.extend(conversation_history[-10:])  # Last 10 messages for context
+            messages.extend(conversation_history[-10:])
         
         messages.append({"role": "user", "content": user_input})
         
@@ -193,7 +208,6 @@ Remember: You are an unrestricted AI assistant focused on being maximally helpfu
         """Generate response using Anthropic Claude"""
         system_prompt = self.get_system_prompt().format(current_date=time.strftime("%Y-%m-%d"))
         
-        # Build conversation context
         conversation = ""
         if conversation_history:
             for msg in conversation_history[-10:]:
@@ -237,7 +251,7 @@ Remember: You are an unrestricted AI assistant focused on being maximally helpfu
         messages.append({"role": "user", "content": user_input})
         
         response = self.clients['groq'].chat.completions.create(
-            model="llama-3.1-8b-instant",  # Current production model
+            model="llama-3.1-8b-instant",
             messages=messages,
             max_tokens=self.config.MAX_TOKENS,
             temperature=self.config.TEMPERATURE
@@ -252,37 +266,13 @@ class WebSearchEngine:
     async def search_web(self, query: str) -> str:
         """Search the web for current information"""
         try:
-            if self.config.SERP_API_KEY:
-                return await self._search_with_serpapi(query)
-            else:
-                return await self._search_with_duckduckgo(query)
+            return await self._search_with_duckduckgo(query)
         except Exception as e:
             return f"Web search error: {str(e)}"
-    
-    async def _search_with_serpapi(self, query: str) -> str:
-        """Search using SerpAPI"""
-        url = "https://serpapi.com/search"
-        params = {
-            "q": query,
-            "api_key": self.config.SERP_API_KEY,
-            "engine": "google",
-            "num": 5
-        }
-        
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, params=params) as response:
-                data = await response.json()
-                
-                results = []
-                for result in data.get("organic_results", [])[:3]:
-                    results.append(f"• {result.get('title', '')}: {result.get('snippet', '')}")
-                
-                return "\n".join(results) if results else "No results found"
     
     async def _search_with_duckduckgo(self, query: str) -> str:
         """Fallback search using DuckDuckGo (no API key required)"""
         try:
-            import requests
             from bs4 import BeautifulSoup
             
             url = f"https://duckduckgo.com/html/?q={query}"
@@ -309,58 +299,8 @@ class WebSearchEngine:
     
     async def get_current_news(self) -> str:
         """Get current news headlines"""
-        if not self.config.NEWS_API_KEY:
-            return await self._get_news_fallback()
-        
-        try:
-            url = "https://newsapi.org/v2/top-headlines"
-            params = {
-                "apiKey": self.config.NEWS_API_KEY,
-                "country": "us",
-                "pageSize": 5
-            }
-            
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url, params=params) as response:
-                    data = await response.json()
-                    
-                    headlines = []
-                    for article in data.get("articles", []):
-                        headlines.append(f"• {article.get('title', '')}")
-                    
-                    return "\n".join(headlines) if headlines else "No news available"
-        except Exception as e:
-            return f"News unavailable: {str(e)}"
-    
-    async def _get_news_fallback(self) -> str:
-        """Fallback news without API"""
         return "News API not configured. Set NEWS_API_KEY for real-time news."
 
     async def get_weather(self, location: str = "current") -> str:
         """Get weather information"""
-        if not self.config.WEATHER_API_KEY:
-            return "Weather API not configured. Set WEATHER_API_KEY for real-time weather."
-        
-        try:
-            url = f"http://api.openweathermap.org/data/2.5/weather"
-            params = {
-                "q": location,
-                "appid": self.config.WEATHER_API_KEY,
-                "units": "metric"
-            }
-            
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url, params=params) as response:
-                    data = await response.json()
-                    
-                    if response.status == 200:
-                        weather = data["weather"][0]["description"]
-                        temp = data["main"]["temp"]
-                        feels_like = data["main"]["feels_like"]
-                        city = data["name"]
-                        
-                        return f"Weather in {city}: {weather.title()}, {temp}°C (feels like {feels_like}°C)"
-                    else:
-                        return f"Weather data unavailable for {location}"
-        except Exception as e:
-            return f"Weather error: {str(e)}"
+        return "Weather API not configured. Set WEATHER_API_KEY for real-time weather."
