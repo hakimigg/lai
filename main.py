@@ -275,6 +275,26 @@ class CodeMasterAI:
         # Add to conversation history
         self.conversation_history.append({'role': 'user', 'content': user_input})
         
+        # Quick greetings - respond instantly without AI call
+        greetings = ['hi', 'hello', 'hey', 'hii', 'hiii', 'yo', 'sup', 'hola', 'heya']
+        if user_input.lower() in greetings:
+            responses = [
+                f"{Colors.BRIGHT_GREEN}Hi there! 👋 How can I help you today?{Colors.RESET}",
+                f"{Colors.BRIGHT_GREEN}Hey! 😊 What can I do for you?{Colors.RESET}",
+                f"{Colors.BRIGHT_GREEN}Hello! 👋 What's on your mind?{Colors.RESET}",
+                f"{Colors.BRIGHT_GREEN}Hi! 😊 How can I assist you today?{Colors.RESET}",
+            ]
+            return random.choice(responses)
+        
+        # How are you responses
+        if user_input.lower() in ['how are you', 'how are you?', 'how r u', 'how r u?', 'hru', 'hru?']:
+            responses = [
+                f"{Colors.BRIGHT_GREEN}I'm doing great, thanks for asking! 😊 How about you?{Colors.RESET}",
+                f"{Colors.BRIGHT_GREEN}I'm awesome! Ready to help you with anything! How are you doing?{Colors.RESET}",
+                f"{Colors.BRIGHT_GREEN}Feeling fantastic! 🌟 What can I help you with today?{Colors.RESET}",
+            ]
+            return random.choice(responses)
+        
         # Command processing
         if user_input.lower() == 'help':
             self.print_help()
